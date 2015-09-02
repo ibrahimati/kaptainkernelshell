@@ -5,7 +5,7 @@
 #include <string.h>
 #include <sys/wait.h>
 
-//structs
+/*structs*/
 struct Redirection
 {
 	char **tokens;
@@ -20,7 +20,7 @@ struct Node
 	struct Node *children;
 };
 
-// tree 
+/* tree */
 struct Directories
 {
 	struct Node *root;
@@ -31,22 +31,21 @@ struct Env
 {
 	char *home;
 	char *pwd;
-	char *shell; //??
+	char *shell; /*??*/
 	char *user;
-	char *path; //??
+	char *path; /*??*/
 	char *oldpwd;
 };
-//structs
+/*structs*/
 
-//functions
+/*functions*/
 char *Read_Line()
 {
 	char *buffer = malloc(sizeof(char)*(256));
-	int stop = 0;
 	int ch_count = 0;
 	char ch;
 
-	// Read in command line
+	/* Read in command line */
 	ch = getchar();
 	while(ch != '\n')
 	{
@@ -58,15 +57,15 @@ char *Read_Line()
 
 	if(ch_count > 255)
 	{
-		stop = 1; // run an exit strategy >>>>
+		/*stop = 1;  run an exit strategy >>>>*/
 	}
-	// Full command line read in
+	/* Full command line read in*/
 
 	return buffer;
 }
 
 
-// Embedded strings
+/* Embedded strings*/
 char *env_var[] = {"$HOME", "$PWD", "$SHELL", "$USER", "$PATH", "$OLDPWD"};
 char *built_in[] = {"exit", "ls", "cd", "echo"};
 
@@ -80,7 +79,7 @@ int main()
 
 	while (1)
 	{
-		// Shell prompt
+		/* Shell prompt*/
 		printf("$HOME:$PWD <> ");
 
 		buffer = malloc(sizeof(char)*(256));
@@ -88,11 +87,11 @@ int main()
 
 		printf("%s\n", buffer);
 
-		//empty input
+		/*empty input*/
 		if(buffer[0] == '\0')
 			continue;
 		
-		// First char invalid
+		/* First char invalid*/
 		for(i = 0; i < 7; i++)
 		{
 			if(buffer[0] == delimiters[i])
@@ -102,7 +101,7 @@ int main()
 			}	
 		}
 
-		// Exiting shell but needs to upon finding "exit"
+		/* Exiting shell but needs to upon finding "exit"*/
 		if(stop == 1)
 		{
 			printf("Exiting shell... \n\n");
@@ -114,7 +113,7 @@ int main()
 		if(n_word == "exit")
 			break;*/
 
-		// Exiting shell
+		/* Exiting shell*/
 	}
 
 	return 0;
