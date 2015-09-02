@@ -26,16 +26,6 @@ struct Directories
 	struct Node *root;
 	int size;
 };
-
-struct Env
-{
-	char *home;
-	char *pwd;
-	char *shell; /*??*/
-	char *user;
-	char *path; /*??*/
-	char *oldpwd;
-};
 /*structs*/
 
 /*functions*/
@@ -66,7 +56,8 @@ char *Read_Line()
 
 
 /* Embedded strings*/
-char *env_var[] = {"$HOME", "$PWD", "$SHELL", "$USER", "$PATH", "$OLDPWD"};
+char *env_var[] = {"$HOME", "$PWD", "$SHELL", "$USER", 
+					"$PATH", "$OLDPWD", "$UNDEFINED"};
 char *built_in[] = {"exit", "ls", "cd", "echo"};
 
 
@@ -80,7 +71,7 @@ int main()
 	while (1)
 	{
 		/* Shell prompt*/
-		printf("$HOME:$PWD <> ");
+		printf("%s@%s:%s <> ", getenv("HOME"), getenv("MACHINE"), getenv("PWD"));
 
 		buffer = malloc(sizeof(char)*(256));
 		buffer = Read_Line();
