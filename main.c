@@ -5,6 +5,7 @@
 #include <string.h>
 #include <sys/wait.h>
 
+/* Class website: http://www.cs.fsu.edu/~cop4610t/index.html*/
 /*structs*/
 struct Redirection
 {
@@ -41,6 +42,7 @@ char **Resolve_Paths(char**);
 char *env_var[] = {"$HOME", "$PWD", "$SHELL", "$USER", 
 					"$PATH", "$OLDPWD", "$UNDEFINED"};
 char *built_in[] = {"exit", "ls", "cd", "echo"};
+
 
 
 int main()
@@ -118,7 +120,7 @@ char **Parse(char *line)
 	args = Expand_Vars(args);
 	args = Resolve_Paths(args);
 	*/
-	return args; /*args*/
+	return args;
 }
 
 char *Parse_Whitespace(char *line, int *count)
@@ -134,24 +136,21 @@ char *Parse_Whitespace(char *line, int *count)
 
 	for(i = 0; i < l_size;)
 	{
+		no_space = 0;
 		while(line[i] != '\0')
 		{
 			if (line[i] == ' ')
 				break; 
 
-			temp[j] = line[i];
-			i++;
-			j++;
-
-
+						/*need to parse when space before but not after*/
 			/* for no spaces in cmd line */
 			for(itr = 0; itr < 6; itr++)
 			{
 				if(line[i] == delimiters[itr])
 				{
 					f++;
-					temp[j] = ' ';
-					j++;
+					/*temp[j] = ' ';
+					j++;*/
 					temp[j] = line[i];
 					f++;
 					j++;
@@ -165,12 +164,17 @@ char *Parse_Whitespace(char *line, int *count)
 				if(no_space)
 					break;
 			}
-			
+
+
 			if(no_space)
 			{
 				/*temp[j] = ' ';*/
 				break;
 			}
+		
+			temp[j] = line[i];
+			i++;
+			j++;
 		}
 
 		if(j != 0 && !no_space)
@@ -190,6 +194,8 @@ char *Parse_Whitespace(char *line, int *count)
 	*count = f;
 
 	/*printf("%s %d", temp, f);*/
+
+	temp[j+1] = '\0';
 
 	return temp;
 }
