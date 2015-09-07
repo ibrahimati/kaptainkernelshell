@@ -6,6 +6,10 @@
 #include <ctype.h>
 #include <sys/wait.h>
 
+//header files for bin lookup
+#include <linux/types.h>
+
+
 /* Class website: http://www.cs.fsu.edu/~cop4610t/index.html*/
 /*structs*/
 struct Redirection
