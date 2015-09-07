@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include <sys/wait.h>
 
 /* Class website: http://www.cs.fsu.edu/~cop4610t/index.html*/
@@ -130,7 +131,7 @@ char *Parse_Whitespace(char *line, int *count)
 	char delimiters[6] = {'|', '<', '>', '&', '$', '~'};
 	int i; 
 	int itr;
-	int j = 0 ;
+	int j = 0;
 	int f = 0;	/*placeholder for count */
 	int no_space = 0;  /*when no space between args */
 
@@ -142,15 +143,18 @@ char *Parse_Whitespace(char *line, int *count)
 			if (line[i] == ' ')
 				break; 
 
-						/*need to parse when space before but not after*/
-			/* for no spaces in cmd line */
 			for(itr = 0; itr < 6; itr++)
 			{
 				if(line[i] == delimiters[itr])
 				{
+					no_space = 1;
+
+					if(no_space && isalpha(line[i-1]))
+					{
+						temp[j] = ' ';
+						j++;
+					}
 					f++;
-					/*temp[j] = ' ';
-					j++;*/
 					temp[j] = line[i];
 					f++;
 					j++;
@@ -158,17 +162,16 @@ char *Parse_Whitespace(char *line, int *count)
 					j++;
 					i++;
 					f++;
-					no_space = 1;
+
 				}
 
 				if(no_space)
 					break;
 			}
 
-
 			if(no_space)
 			{
-				/*temp[j] = ' ';*/
+				temp[j] = ' ';
 				break;
 			}
 		
@@ -179,7 +182,7 @@ char *Parse_Whitespace(char *line, int *count)
 
 		if(j != 0 && !no_space)
 		{	
-			temp[j] = ' ';/*line[i];*/
+			temp[j] = ' ';
 			j++;
 			f++;
 		}
