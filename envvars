@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <ctype.h>
+
+
+IN PARSE FUNCTION SET THESE VARIABLES AND PASS INTO Expand_Vars FUNCTION
+	int var_size=0, /*counter for length of vars array after taking in evironmental variables*/
+	var_count = 0; /*counter for number of variables in array*/
+
+
+char **Expand_Vars(char **args, int num_args, int &var_size, int &var_count)
+{
+
+	/*allocate space for holding in variable chars*/
+	char ** vars = malloc(255SOMENUMBER * sizeof(char*));/*/////////////////////////////////////////////*/
+	
+	/*delimiters*/
+	char space = ' ',
+	dollaS = '$';
+	
+	
+	for (int i=0; i <=255; i++)
+	{
+	  if (args[i] = dollaS) /*if the char is a dollar sign*/
+	  {
+	    for (intj=i+1; j <= 255; j++) /*start with next char in array*/ 
+	    {
+	      vars[var_size] = toupper(args[j]); /*copy it over and convert it to uppercase*/
+	      var_size++; /*increment array size counter*/
+	      if (args[j] == space || args[j] == NULL)/*if reached end of the variable name*/
+	         {
+	         var_count++; /*increment variable counter*/
+	         break /*exit loop*/
+	         }
+	    }
+	  }
+	    if(args[i] == NULL)/*when at end of arguments*/
+	    {
+	      vars[var_size] = NULL;/*insert null character in c string*/
+	      break       /*exit loop*/
+	    }
+	}
+	
+	return vars; /*return array containing variables in lookup format*/
+}
