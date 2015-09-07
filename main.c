@@ -34,7 +34,7 @@ struct Directories
 char *Read_Line(int*);
 char **Parse(char*);
 char *Parse_Whitespace(char*, int*);
-char **Parse_Args(char*);
+char **Parse_Args(char*, int);
 char **Expand_Vars(char**);
 char **Resolve_Paths(char**);
 
@@ -62,14 +62,14 @@ int main()
 		
 		buffer = Read_Line(&ch_count);
 
-		cmd = malloc(20 * sizeof(char*));
+		cmd = malloc(ch_count * sizeof(char*));
 		
 		cmd = Parse(buffer);
 
-		/*empty input*/
+		/*empty input */
 		if(buffer[0] == '\0')
 			continue;
-
+		
 		printf("\n");
 
 		free (buffer);
@@ -111,14 +111,15 @@ char **Parse(char *line)
 {
 	char **args;
 	int num_args = 0;
+	int l_size = strlen(line); /*line size */
 
-	args = malloc(20 * sizeof(char*));
+	args = malloc(l_size * sizeof(char*));
 	args[0] = NULL;
 
 	line = Parse_Whitespace(line, &num_args);
 	printf("%s", line);
-	/*args = Parse_Args(line);
-	args = Expand_Vars(args);
+	args = Parse_Args(line, num_args);
+	/*args = Expand_Vars(args);
 	args = Resolve_Paths(args);
 	*/
 	return args;
@@ -134,14 +135,22 @@ char *Parse_Whitespace(char *line, int *count)
 	int j = 0;
 	int f = 0;	/*placeholder for count */
 	int no_space = 0;  /*when no space between args */
+	int f_space = 0;
 
 	for(i = 0; i < l_size;)
 	{
-		no_space = 0;
+		/* for front spaces*/
+		while(line[i] == ' ')
+			i++;
+
 		while(line[i] != '\0')
 		{
 			if (line[i] == ' ')
+			{	
+				f_space = 1; 
 				break; 
+			}
+
 
 			for(itr = 0; itr < 6; itr++)
 			{
@@ -154,7 +163,7 @@ char *Parse_Whitespace(char *line, int *count)
 						temp[j] = ' ';
 						j++;
 					}
-					f++;
+
 					temp[j] = line[i];
 					f++;
 					j++;
@@ -162,11 +171,11 @@ char *Parse_Whitespace(char *line, int *count)
 					j++;
 					i++;
 					f++;
-
 				}
 
 				if(no_space)
 					break;
+					
 			}
 
 			if(no_space)
@@ -178,9 +187,24 @@ char *Parse_Whitespace(char *line, int *count)
 			temp[j] = line[i];
 			i++;
 			j++;
+
+			if(line[i] == '\0')
+				break;
 		}
 
-		if(j != 0 && !no_space)
+
+
+		if(f_space)
+		{
+			temp[j] = ' ';
+			j++;
+			i++;
+
+			/*handles line with mult file declarations */
+			if(line[i-1] == ' ' && (isalpha(line[i+1]) || line[i] == ' '))
+				f++;
+		}	
+		else if(j != 0 && !no_space)
 		{	
 			temp[j] = ' ';
 			j++;
@@ -192,21 +216,62 @@ char *Parse_Whitespace(char *line, int *count)
 		{
 			i++;
 		}
+
+		f_space = 0;
+		no_space = 0;
+
+		/* Handles excess whitespace after cmd*/
+		if(line[i] == '\0' && line[i-1] == ' ')
+		{	
+			temp[j] = ' ';
+			j++;
+			f++;
+			i = l_size + 1;
+			break; 
+		}
 	}
 
+	temp[j] = '\0';
+
+	printf("%d %s\n\n", f, temp);
 	*count = f;
 
-	/*printf("%s %d", temp, f);*/
-
-	temp[j+1] = '\0';
-
+	
 	return temp;
 }
 
 
-char **Parse_Args(char *line)
+char **Parse_Args(char *line, int count)
 {
-	return NULL;
+	char **args = malloc(count * sizeof(char*));
+	int itr;
+	int i = 0;
+	int j = 0;
+	int x = 0;
+
+
+	for(itr = 0; itr < count; itr++)
+		args[itr] = (char *)malloc(256);
+
+	for(i = 0; line[i] != '\0';)
+	{
+		if(line[i] == ' ')
+		{
+			j++;
+			x = 0;
+			i++;
+			continue;
+		}
+
+		args[j][x] = line[i];
+		i++;
+		x++;	
+	}
+
+	for(i = 0; i < count; i++)
+		printf("\n%s\n", args[i]);
+
+	return args;
 }
 
 char **Expand_Vars(char **args)
